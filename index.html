@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Орфоэпия | 5 класс | Зелёный тренажёр</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- ЭКРАН ПРИВЕТСТВИЯ -->
+    <div id="welcome-screen" class="screen active">
+        <div class="container welcome-container">
+            <div class="logo">
+                <i class="fas fa-microphone-alt"></i>
+                <h1>Орфоэпия</h1>
+            </div>
+            <p class="subtitle">Тренажёр ударений для 5 класса</p>
+            
+            <div class="input-group">
+                <input type="text" id="player-name" placeholder="Введите ваше имя" maxlength="20">
+                <div id="name-error" class="error-message"></div>
+            </div>
+            
+            <button id="start-game-btn" class="btn-start">
+                <i class="fas fa-play"></i> Начать игру
+            </button>
+            
+            <div class="rules">
+                <h3>📖 Правила:</h3>
+                <p>✅ 20 случайных слов за раунд</p>
+                <p>🎯 Выберите правильный вариант ударения</p>
+                <p>📊 В конце — разбор ошибок и таблица рекордов</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН ИГРЫ -->
+    <div id="game-screen" class="screen">
+        <div class="container game-container">
+            <div class="game-header">
+                <div class="player-info">
+                    <i class="fas fa-user"></i>
+                    <span id="current-player">Игрок: </span>
+                </div>
+                <div class="stats">
+                    <span class="correct-stats"><i class="fas fa-check-circle"></i> <span id="correct-count">0</span></span>
+                    <span class="wrong-stats"><i class="fas fa-times-circle"></i> <span id="wrong-count">0</span></span>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div id="progress-fill"></div>
+            </div>
+            
+            <div class="word-counter">
+                <span id="current-word">Слово: 1/20</span>
+            </div>
+            
+            <div class="question-card">
+                <div class="question-text">🔊 Какое ударение правильное?</div>
+                <div class="variants">
+                    <button class="variant-btn" id="variant1">👉 загрузка</button>
+                    <button class="variant-btn" id="variant2">👉 загрузка</button>
+                </div>
+            </div>
+            
+            <div class="feedback-message" id="feedback-message"></div>
+            
+            <div class="game-controls">
+                <button id="check-btn" class="btn-check" disabled>
+                    <i class="fas fa-check-circle"></i> Проверить
+                </button>
+                <button id="skip-btn" class="btn-skip">
+                    <i class="fas fa-forward"></i> Пропустить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН РАЗБОРА ОШИБОК -->
+    <div id="mistakes-screen" class="screen">
+        <div class="container mistakes-container">
+            <h2><i class="fas fa-clipboard-list"></i> Разбор ошибок</h2>
+            
+            <div class="mistakes-summary">
+                <div class="summary-item">
+                    <span class="summary-label">❌ Ошибок:</span>
+                    <span id="mistakes-count" class="summary-value">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">⏭️ Пропусков:</span>
+                    <span id="skips-count" class="summary-value">0</span>
+                </div>
+            </div>
+            
+            <div id="mistakes-list" class="mistakes-list">
+                <!-- Список ошибок появится здесь -->
+            </div>
+            
+            <div class="mistakes-buttons">
+                <button id="to-leaderboard-btn" class="btn-leaderboard">
+                    <i class="fas fa-trophy"></i> Таблица рекордов
+                </button>
+                <button id="new-game-btn" class="btn-newgame">
+                    <i class="fas fa-redo-alt"></i> Новая игра
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН РЕЗУЛЬТАТОВ (ТАБЛИЦА ЛИДЕРОВ) -->
+    <div id="results-screen" class="screen">
+        <div class="container results-container">
+            <h2><i class="fas fa-chart-line"></i> Ваши результаты</h2>
+            
+            <div class="current-result">
+                <p>✅ Правильно: <span id="final-correct">0</span>/20</p>
+                <p>📈 Процент: <span id="final-percentage">0</span>%</p>
+                <p>⏱️ Время: <span id="final-time">0:00</span></p>
+                <p>❌ Ошибок: <span id="final-mistakes">0</span> | ⏭️ Пропусков: <span id="final-skips">0</span></p>
+            </div>
+            
+            <div class="leaderboard">
+                <h3><i class="fas fa-trophy"></i> Лучшие результаты за сегодня</h3>
+                <div id="personal-leaderboard" class="leaderboard-list"></div>
+                <div id="rank-message" class="rank-message"></div>
+            </div>
+            
+            <div class="results-buttons">
+                <button id="exit-btn" class="btn-exit">
+                    <i class="fas fa-home"></i> На главную
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="words.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

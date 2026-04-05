@@ -1,4 +1,4 @@
-﻿// script.js — Орфоэпический тренажёр с системой ошибок
+﻿// script.js — Орфоэпический тренажёр с подсветкой выбранной кнопки
 
 let currentPlayer = '';
 let currentRound = [];
@@ -12,6 +12,10 @@ let globalMistakesHistory = [];
 
 let currentCorrectPosition = null;
 let selectedPosition = null;
+
+// ========== ВСТАВЬТЕ ВАШУ ССЫЛКУ ИЗ SHEET.BEST СЮДА ==========
+const SHEETBEST_URL = 'https://sheet.best/api/sheets/ad514d3a-d3e2-4a32-af9f-a746294fab2e';
+// =============================================================
 
 const positiveMessages = ["Ты лучший! 🌟", "Ого! Молодец 🎉", "Неплохо! 👍", "Да ты все знаешь! 🧠"];
 const negativeMessages = ["Подумай! 🤔", "Упс! Учить надо! 📚", "А если подумать? 💭"];
@@ -98,6 +102,13 @@ function generateRandomRound() {
     return shuffleArray(roundWords);
 }
 
+function clearVariantHighlight() {
+    variant1Btn.style.background = "#f1f8e9";
+    variant2Btn.style.background = "#f1f8e9";
+    variant1Btn.style.border = "3px solid #81c784";
+    variant2Btn.style.border = "3px solid #81c784";
+}
+
 function showCurrentWord() {
     if (isGameFinished) return;
     
@@ -113,10 +124,7 @@ function showCurrentWord() {
         variant2Btn.innerHTML = `👉 ${wordObj.correct}`;
     }
     
-    variant1Btn.style.background = "#f1f8e9";
-    variant2Btn.style.background = "#f1f8e9";
-    variant1Btn.style.border = "3px solid #81c784";
-    variant2Btn.style.border = "3px solid #81c784";
+    clearVariantHighlight();
     
     currentWordElement.textContent = `Слово: ${currentWordIndex + 1}/20`;
     
@@ -287,7 +295,35 @@ function showMistakesScreen() {
     showScreen('mistakes-screen');
 }
 
-function showPersonalLeaderboard() {
+// ========== ОТПРАВКА В SHEET.BEST ==========
+async function sendToSheetBest(name, score, total, percentage, timeSpent, mistakes) {
+    if (!SHEETBEST_URL || SHEETBEST_URL.includes('ВАШ_УНИКАЛЬНЫЙ_ИД')) {
+        console.log('⚠️ Sheet.best не настроен. Пропускаем отправку.');
+        return;
+    }
+    
+    try {
+        await fetch(SHEETBEST_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify([{
+                name: name,
+                score: score,
+                total: total,
+                percentage: percentage + '%',
+                time: timeSpent + ' сек',
+                mistakes: mistakes,
+                date: new Date().toLocaleString('ru-RU')
+            }])
+        });
+        console.log('✅ Результат отправлен в Sheet.best');
+    } catch (error) {
+        console.error('❌ Ошибка отправки:', error);
+    }
+}
+// ==========================================
+
+async function showPersonalLeaderboard() {
     const timeSpentSeconds = Math.floor((Date.now() - gameStartTime) / 1000);
     const minutes = Math.floor(timeSpentSeconds / 60);
     const seconds = timeSpentSeconds % 60;
@@ -305,6 +341,9 @@ function showPersonalLeaderboard() {
     finalTimeElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     if (finalMistakesElement) finalMistakesElement.textContent = mistakeCount;
     if (finalSkipsElement) finalSkipsElement.textContent = skipCount;
+    
+    // Отправляем результат в Sheet.best
+    await sendToSheetBest(currentPlayer, scoreCorrect, 20, percentage, timeSpentSeconds, mistakeCount);
     
     const today = new Date().toISOString().split('T')[0];
     
@@ -414,17 +453,23 @@ function resetToWelcome() {
     if (nameError) nameError.textContent = '';
 }
 
-// Обработчики событий
+// Обработчики событий с подсветкой выбранной кнопки
 variant1Btn.addEventListener('click', () => {
     if (isGameFinished) return;
     selectedPosition = 'left';
     checkButton.disabled = false;
+    clearVariantHighlight();
+    variant1Btn.style.background = "#c8e6c9";
+    variant1Btn.style.border = "3px solid #2e7d32";
 });
 
 variant2Btn.addEventListener('click', () => {
     if (isGameFinished) return;
     selectedPosition = 'right';
     checkButton.disabled = false;
+    clearVariantHighlight();
+    variant2Btn.style.background = "#c8e6c9";
+    variant2Btn.style.border = "3px solid #2e7d32";
 });
 
 checkButton.addEventListener('click', checkAnswer);
@@ -453,7 +498,6 @@ playerNameInput.addEventListener('input', () => {
     if (nameError) nameError.textContent = '';
 });
 
-// Восстановление имени при загрузке
 const savedName = localStorage.getItem('orfepiya5class_player');
 if (savedName && playerNameInput) {
     playerNameInput.value = savedName;

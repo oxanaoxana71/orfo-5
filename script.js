@@ -454,22 +454,43 @@ function resetToWelcome() {
 }
 
 // Обработчики событий с подсветкой выбранной кнопки
+// Функция подсветки выбранной кнопки (для телефона и компьютера)
+function highlightSelected(button) {
+    clearVariantHighlight();
+    button.style.background = "#c8e6c9";
+    button.style.border = "3px solid #2e7d32";
+}
+
+// Обработчики для компьютера (click)
 variant1Btn.addEventListener('click', () => {
     if (isGameFinished) return;
     selectedPosition = 'left';
     checkButton.disabled = false;
-    clearVariantHighlight();
-    variant1Btn.style.background = "#c8e6c9";
-    variant1Btn.style.border = "3px solid #2e7d32";
+    highlightSelected(variant1Btn);
 });
 
 variant2Btn.addEventListener('click', () => {
     if (isGameFinished) return;
     selectedPosition = 'right';
     checkButton.disabled = false;
-    clearVariantHighlight();
-    variant2Btn.style.background = "#c8e6c9";
-    variant2Btn.style.border = "3px solid #2e7d32";
+    highlightSelected(variant2Btn);
+});
+
+// Обработчики для телефона (touchstart)
+variant1Btn.addEventListener('touchstart', (e) => {
+    e.preventDefault();  // предотвращаем масштабирование
+    if (isGameFinished) return;
+    selectedPosition = 'left';
+    checkButton.disabled = false;
+    highlightSelected(variant1Btn);
+});
+
+variant2Btn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (isGameFinished) return;
+    selectedPosition = 'right';
+    checkButton.disabled = false;
+    highlightSelected(variant2Btn);
 });
 
 checkButton.addEventListener('click', checkAnswer);
